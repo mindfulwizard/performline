@@ -1,40 +1,35 @@
-var fs = require('fs');
+const fs = require('fs');
+const readline = require('readline');
 
 //create hashtable of names
+var linecounter = 0;
 var hashtable;
-
-fs.readFile('names.txt', 'utf8', function(err, contents) {
-    if(err) {
-        throw err;
-    } else {
-        hashtable = contents.split('\n');
-        //console.log(hashtable);
-    }
-});
-
 var output = {};
 
-//stream the list
-var listStream = fs.createReadStream('list.txt', {encoding: 'utf8'});
+const contents = fs.readFileSync('names.txt', 'utf8');
+hashtable = contents.split('\n');
+//console.log(hashtable);
 
-listStream.on('data', function(contents) {
-    //when there's a newline in contents???
-    checker(hashtable, contents);
-})
+const rl = readline.createInterface({
+    input: fs.createReadStream('list.txt', {encoding: 'utf8'})
+});
 
-listStream.on('end', function(contents) {
-    process.stdout.write(output);
-})
-
+rl.on('line', (line) => {
+    checker(hashtable, line, linecounter);
+    linecounter++;
+}).on('close', () => {
+    //process.stdout.write(output);
+    console.log(output);
+});
 
 //checker function
-function checker(namesArray, line) {
+function checker(namesArray, phrase, lineNumber) {
     namesArray.forEach(function(name) {
-        if(name.toLowerCase() === line.toLowerCase()) {
+        if(name.toLowerCase() === phrase.toLowerCase()) {
             if(output[name]) {
                 output[name].push(lineNumber)
             } else {
-                output[name] = name;
+                output[name] = [];
                 output[name].push(lineNumber);
             }
         }
