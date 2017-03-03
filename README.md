@@ -1,6 +1,4 @@
-#performline
-
-My solution to the following challenge:
+#My solution to the following challenge:
 
 Write a program that takes these two files as input:
 
